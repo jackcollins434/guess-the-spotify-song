@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const DB_PATH = "internal/db/app.db"
+const DB_PATH = "app.db"
 
 var store *sqlitestore.SqliteStore
 
