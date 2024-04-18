@@ -36,6 +36,7 @@ func main() {
 	db.AutoMigrate(&model.User{})
 
 	r := chi.NewRouter()
+	r.Handle("/*", http.StripPrefix("/", http.FileServer(http.Dir("./public"))))
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		session, err := store.Get(r, "foobar")
