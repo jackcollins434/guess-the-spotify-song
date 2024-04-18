@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
@@ -36,7 +37,14 @@ func main() {
 	db.AutoMigrate(&model.User{})
 
 	r := chi.NewRouter()
-	r.Handle("/*", http.StripPrefix("/", http.FileServer(http.Dir("./public"))))
+	r.Handle("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, ".gitkeep") {
+			http.NotFound(w, r)
+			return
+		}
+
+		http.FileServer(http.Dir("./public")).ServeHTTP(w, r)
+	}))
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		session, err := store.Get(r, "foobar")
